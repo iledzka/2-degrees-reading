@@ -6,44 +6,70 @@ import Animated, {
   useAnimatedStyle,
   interpolate,
   Extrapolate,
+  withSpring,
+  useDerivedValue,
 } from 'react-native-reanimated';
 
 import { transformOrigin, rotateXY } from './utils';
 
 const { width: WIDTH, height: HEIGHT } = Dimensions.get('window');
 const BOX_SIZE = WIDTH;
+const ROTATION = -90;
 
 export default function Box() {
   const translateX = useSharedValue(0);
   const rotate = useSharedValue(0);
 
   const origin = { x: 60, y: 0, z: -BOX_SIZE / 2 };
-  const matrix = useSharedValue(transformOrigin(rotateXY(rotate.value, 0), origin));
+  const matrix = useDerivedValue(
+    () => transformOrigin(rotateXY(rotate.value, 0), origin),
+    [rotate]
+  );
 
-  const matrixRight = useSharedValue(transformOrigin(rotateXY(rotate.value + 90, 0), origin));
+  const matrixRight = useDerivedValue(
+    () => transformOrigin(rotateXY(rotate.value + 90, 0), origin),
+    [rotate]
+  );
 
-  const panGesture = Gesture.Pan().onUpdate((e) => {
-    if (e.translationX < 0 && rotate.value > -90) {
-      translateX.value = interpolate(Math.abs(e.translationX), [0, 10, 60], [0, 40, 60], {
-        extrapolateRight: Extrapolate.CLAMP,
-      });
-      rotate.value = interpolate(Math.abs(e.translationX), [0, 60], [0, -90], {
-        extrapolateRight: Extrapolate.CLAMP,
-      });
-    } else if (e.translationX > 0 && rotate.value !== 0) {
-      console.log('rotate.value', rotate.value);
-      translateX.value = interpolate(Math.abs(e.translationX), [0, 38, 60], [60, 60, 0], {
-        extrapolateRight: Extrapolate.CLAMP,
-      });
-      rotate.value = interpolate(Math.abs(e.translationX), [0, 60], [-90, 0], {
-        extrapolateRight: Extrapolate.CLAMP,
-      });
-    }
+  const panGesture = Gesture.Pan()
+    .averageTouches(true)
+    .onChange((e) => {
+      'worklet';
+      if (e.translationX < 0 && rotate.value > -90) {
+        translateX.value = interpolate(Math.abs(e.translationX), [0, 10, 60], [0, 40, 60], {
+          extrapolateRight: Extrapolate.CLAMP,
+          extrapolateLeft: Extrapolate.CLAMP,
+        });
+        rotate.value = interpolate(Math.abs(e.translationX), [0, 60], [0, ROTATION], {
+          extrapolateRight: Extrapolate.CLAMP,
+          extrapolateLeft: Extrapolate.CLAMP,
+        });
+      } else if (e.translationX > 0 && rotate.value !== 0) {
+        // console.log('rotate.value', rotate.value);
+        translateX.value = interpolate(Math.abs(e.translationX), [0, 38, 60], [60, 60, 0], {
+          extrapolateRight: Extrapolate.CLAMP,
+          extrapolateLeft: Extrapolate.CLAMP,
+        });
+        rotate.value = interpolate(Math.abs(e.translationX), [0, 60], [ROTATION, 0], {
+          extrapolateRight: Extrapolate.CLAMP,
+          extrapolateLeft: Extrapolate.CLAMP,
+        });
+      }
+    })
+    .onFinalize(() => {
+      'worklet';
+      console.log('finalise', translateX.value, rotate.value, ROTATION / 2);
 
-    console.log(e.translationX);
-    matrix.value = transformOrigin(rotateXY(rotate.value, 0), origin);
-    matrixRight.value = transformOrigin(rotateXY(rotate.value + 90, 0), origin);
-  });
+      if (rotate.value > ROTATION / 2 && translateX.value !== 0) {
+        console.log('should go right');
+        translateX.value = withSpring(0);
+        rotate.value = withSpring(0);
+      } else if (rotate.value <= ROTATION / 2) {
+        console.log('should go left');
+        translateX.value = withSpring(60);
+        rotate.value = withSpring(-90);
+      }
+    });
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
