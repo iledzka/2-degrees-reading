@@ -6,39 +6,54 @@ import Animated, {
   useAnimatedStyle,
   interpolate,
   Extrapolate,
-  withSpring,
+  withSequence,
   useDerivedValue,
   withTiming,
   Easing,
 } from 'react-native-reanimated';
 
-import { transformOrigin, rotateXY } from './utils';
+import { transformOrigin, rotateXandTranslateX } from './utils';
 
-const { width: WIDTH, height: HEIGHT } = Dimensions.get('window');
-const BOX_SIZE = WIDTH;
+const { width: SCREEN_WIDTH, height: HEIGHT } = Dimensions.get('window');
 const ROTATION = -90;
 const TRANSLATION_X_CLAMP = 70;
+const MARGIN_LEFT = 60;
 
 export default function Box() {
-  const translateX = useSharedValue(0);
   const rotate = useSharedValue(0);
 
-  const origin = { x: 60, y: 0, z: -BOX_SIZE / 2 };
+  const translateX = useDerivedValue(() => {
+    console.log('--> rotate: ', rotate.value);
+    const val = interpolate(rotate.value, [0, ROTATION], [0, MARGIN_LEFT], {
+      extrapolateRight: Extrapolate.CLAMP,
+      extrapolateLeft: Extrapolate.CLAMP,
+    });
+    console.log('--> val: ', val);
+    return val;
+  }, [rotate]);
 
+  // origin should fall back half-length of the screen width in z-axis
+  const origin = useDerivedValue(
+    () => ({ x: translateX.value, y: 0, z: -SCREEN_WIDTH / 2 }),
+    [translateX]
+  );
+
+  // rotate the main screen in a 3-dimensional space
   const matrix = useDerivedValue(
-    () => transformOrigin(rotateXY(rotate.value, 0), origin),
-    [rotate]
+    () => transformOrigin(rotateXandTranslateX(rotate.value, 0, translateX.value), origin.value),
+    [rotate, origin]
   );
 
+  // rotate detail screen in a 3-dimensional space
   const matrixRight = useDerivedValue(
-    () => transformOrigin(rotateXY(rotate.value + 90, 0), origin),
-    [rotate]
+    () =>
+      transformOrigin(rotateXandTranslateX(rotate.value + 90, 0, translateX.value), origin.value),
+    [rotate, origin]
   );
 
-  const triggerTransitionToDetailView = (tX: number, r: number) => {
+  const rotateAndSnapToEdge = (tX: number, r: number) => {
     'worklet';
-    const config = { duration: 300, easing: Easing.bezier(0.7, 0, 0.84, 0) };
-    translateX.value = withTiming(tX, config);
+    const config = { duration: 300, easing: Easing.bezier(1, 0.3, 0.85, 1) };
     rotate.value = withTiming(r, config);
   };
 
@@ -47,53 +62,30 @@ export default function Box() {
     .onChange((e) => {
       'worklet';
 
+      // snap to both edges when panning
       const config = {
         extrapolateRight: Extrapolate.CLAMP,
         extrapolateLeft: Extrapolate.CLAMP,
       };
+
+      const translationX = Math.abs(e.translationX);
+
+      // swipe to open the detail screen
       if (e.translationX < 0 && rotate.value > -90) {
-        translateX.value = interpolate(
-          Math.abs(e.translationX),
-          [10, 20, TRANSLATION_X_CLAMP],
-          [0, 40, 60],
-          config
-        );
-        rotate.value = interpolate(
-          Math.abs(e.translationX),
-          [10, TRANSLATION_X_CLAMP],
-          [0, ROTATION],
-          config
-        );
+        rotate.value = interpolate(translationX, [10, TRANSLATION_X_CLAMP], [0, ROTATION], config);
+
+        // swipe back to the main screen
       } else if (e.translationX > 0 && rotate.value !== 0) {
-        // console.log('rotate.value', rotate.value);
-        translateX.value = interpolate(
-          Math.abs(e.translationX),
-          [10, 38, TRANSLATION_X_CLAMP],
-          [60, 60, 0],
-          config
-        );
-        rotate.value = interpolate(
-          Math.abs(e.translationX),
-          [10, TRANSLATION_X_CLAMP],
-          [ROTATION, 0],
-          config
-        );
+        rotate.value = interpolate(translationX, [10, TRANSLATION_X_CLAMP], [ROTATION, 0], config);
       }
     })
     .onFinalize(() => {
       'worklet';
-      console.log('finalise', translateX.value, rotate.value, ROTATION / 2);
 
       if (rotate.value > ROTATION / 2 && translateX.value !== 0) {
-        // console.log('should go right');
-        // translateX.value = withSpring(0);
-        // rotate.value = withSpring(0);
-        triggerTransitionToDetailView(0, 0);
+        rotateAndSnapToEdge(0, 0);
       } else if (rotate.value <= ROTATION / 2) {
-        // console.log('should go left');
-        // translateX.value = withSpring(60);
-        // rotate.value = withSpring(ROTATION);
-        triggerTransitionToDetailView(60, ROTATION);
+        rotateAndSnapToEdge(MARGIN_LEFT, ROTATION);
       }
     });
 
@@ -123,7 +115,7 @@ export default function Box() {
           <Animated.View style={[styles.boxSide, styles.front, animatedStyle]}>
             <Text style={styles.text}>Front</Text>
             <Pressable
-              onPress={() => triggerTransitionToDetailView(60, ROTATION)}
+              onPress={() => rotateAndSnapToEdge(MARGIN_LEFT, ROTATION)}
               style={styles.button}>
               <Text style={styles.text}>Front</Text>
             </Pressable>
@@ -151,13 +143,13 @@ const styles = StyleSheet.create({
   },
   box: {
     height: HEIGHT,
-    width: BOX_SIZE,
+    width: SCREEN_WIDTH,
     backgroundColor: 'blue',
   },
   boxSide: {
     height: HEIGHT,
-    width: BOX_SIZE,
-    padding: Math.floor(BOX_SIZE / 4),
+    width: SCREEN_WIDTH,
+    padding: Math.floor(SCREEN_WIDTH / 4),
     backgroundColor: 'black',
     borderColor: 'white',
     borderWidth: 2,
@@ -168,6 +160,6 @@ const styles = StyleSheet.create({
     // transform: [{ perspective: HEIGHT }, { matrix }, { translateX: 60 }],
   },
   right: {
-    width: BOX_SIZE - 60,
+    width: SCREEN_WIDTH - MARGIN_LEFT,
   },
 });
