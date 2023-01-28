@@ -6,13 +6,12 @@ import Animated, {
   useAnimatedStyle,
   interpolate,
   Extrapolate,
-  withSequence,
   useDerivedValue,
   withTiming,
   Easing,
 } from 'react-native-reanimated';
 
-import { transformOrigin, rotateXandTranslateX } from './utils';
+import { transformOrigin, rotateX } from './utils';
 
 const { width: SCREEN_WIDTH, height: HEIGHT } = Dimensions.get('window');
 const ROTATION = -90;
@@ -23,31 +22,31 @@ export default function Box() {
   const rotate = useSharedValue(0);
 
   const translateX = useDerivedValue(() => {
-    console.log('--> rotate: ', rotate.value);
-    const val = interpolate(rotate.value, [0, ROTATION], [0, MARGIN_LEFT], {
+    return interpolate(rotate.value, [0, ROTATION], [0, MARGIN_LEFT], {
       extrapolateRight: Extrapolate.CLAMP,
       extrapolateLeft: Extrapolate.CLAMP,
     });
-    console.log('--> val: ', val);
-    return val;
   }, [rotate]);
 
-  // origin should fall back half-length of the screen width in z-axis
-  const origin = useDerivedValue(
-    () => ({ x: translateX.value, y: 0, z: -SCREEN_WIDTH / 2 }),
-    [translateX]
-  );
+  // origin should fall back at least half-length of the screen width in z-axis
+  const origin = useDerivedValue(() => {
+    const z = -SCREEN_WIDTH / 2;
+    return {
+      x: translateX.value,
+      y: 0,
+      z: interpolate(translateX.value, [0, MARGIN_LEFT - 16, MARGIN_LEFT], [z - 20, z, z]),
+    };
+  }, [translateX]);
 
   // rotate the main screen in a 3-dimensional space
   const matrix = useDerivedValue(
-    () => transformOrigin(rotateXandTranslateX(rotate.value, 0, translateX.value), origin.value),
+    () => transformOrigin(rotateX(rotate.value), origin.value),
     [rotate, origin]
   );
 
   // rotate detail screen in a 3-dimensional space
   const matrixRight = useDerivedValue(
-    () =>
-      transformOrigin(rotateXandTranslateX(rotate.value + 90, 0, translateX.value), origin.value),
+    () => transformOrigin(rotateX(rotate.value + 90), origin.value),
     [rotate, origin]
   );
 
