@@ -34,7 +34,7 @@ export default function Box() {
     return {
       x: translateX.value,
       y: 0,
-      z: interpolate(translateX.value, [0, MARGIN_LEFT - 16, MARGIN_LEFT], [z - 20, z, z]),
+      z,
     };
   }, [translateX]);
 
@@ -120,8 +120,10 @@ export default function Box() {
             </Pressable>
           </Animated.View>
 
-          <Animated.View style={[styles.boxSide, styles.right, animatedStyleRight]}>
-            <Text style={styles.text}>Left</Text>
+          <Animated.View style={[styles.boxSide, animatedStyleRight]}>
+            <View style={[styles.innerRight]}>
+              <Text style={styles.text}>Left</Text>
+            </View>
           </Animated.View>
         </View>
       </View>
@@ -148,17 +150,24 @@ const styles = StyleSheet.create({
   boxSide: {
     height: HEIGHT,
     width: SCREEN_WIDTH,
+  },
+  text: { color: 'white', fontSize: 20 },
+  front: {
     padding: Math.floor(SCREEN_WIDTH / 4),
     backgroundColor: 'black',
     borderColor: 'white',
     borderWidth: 2,
     position: 'absolute',
   },
-  text: { color: 'white', fontSize: 20 },
-  front: {
-    // transform: [{ perspective: HEIGHT }, { matrix }, { translateX: 60 }],
-  },
-  right: {
+  innerRight: {
+    height: HEIGHT,
     width: SCREEN_WIDTH - MARGIN_LEFT,
+    marginLeft: 0,
+    flex: 1,
+    padding: Math.floor(SCREEN_WIDTH / 4),
+    backgroundColor: 'black',
+    borderColor: 'white',
+    borderWidth: 2,
+    position: 'absolute',
   },
 });
