@@ -1,3 +1,4 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import React from 'react';
 import { View, Text, StyleSheet, Dimensions, Pressable } from 'react-native';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
@@ -9,14 +10,17 @@ import Animated, {
   useDerivedValue,
   withTiming,
   Easing,
+  withSpring,
 } from 'react-native-reanimated';
 
+import DetailScreen from './DetailScreen';
+import MainScreen from './MainScreen';
 import { transformOrigin, rotateX } from './utils';
 
 const { width: SCREEN_WIDTH, height: HEIGHT } = Dimensions.get('window');
 const ROTATION = -90;
 const TRANSLATION_X_CLAMP = 70;
-const MARGIN_LEFT = 60;
+const MARGIN_LEFT = 34;
 
 export default function Box() {
   const rotate = useSharedValue(0);
@@ -49,6 +53,16 @@ export default function Box() {
     () => transformOrigin(rotateX(rotate.value + 90), origin.value),
     [rotate, origin]
   );
+
+  // animate the button to navigate back from the detail view
+  const backButtonPosition = useDerivedValue(() => {
+    return rotate.value === ROTATION
+      ? withTiming(-MARGIN_LEFT * 0.6, {
+          duration: 200,
+          easing: Easing.bezier(0.175, 0.885, 0.32, 1.275),
+        })
+      : withTiming(MARGIN_LEFT, { duration: 200, easing: Easing.ease });
+  }, [rotate]);
 
   const rotateAndSnapToEdge = (tX: number, r: number) => {
     'worklet';
@@ -107,22 +121,38 @@ export default function Box() {
     };
   });
 
+  const animatedStyleBackBtn = useAnimatedStyle(() => {
+    return {
+      marginLeft: backButtonPosition.value,
+      opacity: backButtonPosition.value > 0 ? 0 : 1,
+    };
+  });
+
   return (
     <GestureDetector gesture={panGesture}>
       <View style={styles.container}>
         <View style={styles.box}>
           <Animated.View style={[styles.boxSide, styles.front, animatedStyle]}>
-            <Text style={styles.text}>Front</Text>
-            <Pressable
-              onPress={() => rotateAndSnapToEdge(MARGIN_LEFT, ROTATION)}
-              style={styles.button}>
-              <Text style={styles.text}>Front</Text>
-            </Pressable>
+            <MainScreen
+              onNavigateToDetailScreen={() => {
+                rotateAndSnapToEdge(MARGIN_LEFT, ROTATION);
+              }}
+            />
           </Animated.View>
 
           <Animated.View style={[styles.boxSide, animatedStyleRight]}>
+            <Pressable
+              style={{ zIndex: 10 }}
+              onPress={() => {
+                rotateAndSnapToEdge(0, 0);
+              }}>
+              <Animated.View style={[styles.goBackButton, animatedStyleBackBtn]}>
+                <Ionicons name="arrow-back-outline" size={28} color="black" />
+              </Animated.View>
+            </Pressable>
+
             <View style={[styles.innerRight]}>
-              <Text style={styles.text}>Left</Text>
+              <DetailScreen />
             </View>
           </Animated.View>
         </View>
@@ -137,11 +167,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     justifyContent: 'center',
   },
-  button: {
-    padding: 10,
-    backgroundColor: 'pink',
-    alignItems: 'center',
-  },
+
   box: {
     height: HEIGHT,
     width: SCREEN_WIDTH,
@@ -151,9 +177,19 @@ const styles = StyleSheet.create({
     height: HEIGHT,
     width: SCREEN_WIDTH,
   },
+  goBackButton: {
+    height: MARGIN_LEFT + 10,
+    width: MARGIN_LEFT,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomLeftRadius: 8,
+    borderTopLeftRadius: 8,
+    marginTop: MARGIN_LEFT * 2,
+    backgroundColor: 'white',
+    zIndex: 10,
+  },
   text: { color: 'white', fontSize: 20 },
   front: {
-    padding: Math.floor(SCREEN_WIDTH / 4),
     backgroundColor: 'black',
     borderColor: 'white',
     borderWidth: 2,
@@ -164,10 +200,6 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH - MARGIN_LEFT,
     marginLeft: 0,
     flex: 1,
-    padding: Math.floor(SCREEN_WIDTH / 4),
-    backgroundColor: 'black',
-    borderColor: 'white',
-    borderWidth: 2,
     position: 'absolute',
   },
 });
