@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions, Pressable } from 'react-native';
+import { View, StyleSheet, Dimensions, Pressable } from 'react-native';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
@@ -10,8 +10,8 @@ import Animated, {
   useDerivedValue,
   withTiming,
   Easing,
-  withSpring,
 } from 'react-native-reanimated';
+import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 
 import DetailScreen from './DetailScreen';
 import MainScreen from './MainScreen';
@@ -61,7 +61,7 @@ export default function Box() {
           duration: 200,
           easing: Easing.bezier(0.175, 0.885, 0.32, 1.275),
         })
-      : withTiming(MARGIN_LEFT, { duration: 200, easing: Easing.ease });
+      : withTiming(MARGIN_LEFT, { duration: 300, easing: Easing.ease });
   }, [rotate]);
 
   const rotateAndSnapToEdge = (tX: number, r: number) => {
@@ -129,49 +129,50 @@ export default function Box() {
   });
 
   return (
-    <GestureDetector gesture={panGesture}>
-      <View style={styles.container}>
-        <View style={styles.box}>
-          <Animated.View style={[styles.boxSide, styles.front, animatedStyle]}>
-            <MainScreen
-              onNavigateToDetailScreen={() => {
-                rotateAndSnapToEdge(MARGIN_LEFT, ROTATION);
-              }}
-            />
-          </Animated.View>
+    <SafeAreaProvider initialWindowMetrics={initialWindowMetrics}>
+      <GestureDetector gesture={panGesture}>
+        <View style={styles.container}>
+          <View style={styles.box}>
+            <Animated.View style={[styles.boxSide, styles.front, animatedStyle]}>
+              <MainScreen
+                onNavigateToDetailScreen={() => {
+                  rotateAndSnapToEdge(MARGIN_LEFT, ROTATION);
+                }}
+              />
+            </Animated.View>
 
-          <Animated.View style={[styles.boxSide, animatedStyleRight]}>
-            <Pressable
-              style={{ zIndex: 10 }}
-              onPress={() => {
-                rotateAndSnapToEdge(0, 0);
-              }}>
-              <Animated.View style={[styles.goBackButton, animatedStyleBackBtn]}>
-                <Ionicons name="arrow-back-outline" size={28} color="black" />
-              </Animated.View>
-            </Pressable>
+            <Animated.View style={[styles.boxSide, animatedStyleRight]}>
+              <Pressable
+                style={{ zIndex: 10 }}
+                onPress={() => {
+                  rotateAndSnapToEdge(0, 0);
+                }}>
+                <Animated.View style={[styles.goBackButton, animatedStyleBackBtn]}>
+                  <Ionicons name="arrow-back-outline" size={28} color="black" />
+                </Animated.View>
+              </Pressable>
 
-            <View style={[styles.innerRight]}>
-              <DetailScreen />
-            </View>
-          </Animated.View>
+              <View style={[styles.innerRight]}>
+                <DetailScreen />
+              </View>
+            </Animated.View>
+          </View>
         </View>
-      </View>
-    </GestureDetector>
+      </GestureDetector>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'red',
     justifyContent: 'center',
   },
 
   box: {
     height: HEIGHT,
     width: SCREEN_WIDTH,
-    backgroundColor: 'blue',
+    backgroundColor: 'yellow',
   },
   boxSide: {
     height: HEIGHT,
@@ -190,9 +191,7 @@ const styles = StyleSheet.create({
   },
   text: { color: 'white', fontSize: 20 },
   front: {
-    backgroundColor: 'black',
-    borderColor: 'white',
-    borderWidth: 2,
+    backgroundColor: 'white',
     position: 'absolute',
   },
   innerRight: {
