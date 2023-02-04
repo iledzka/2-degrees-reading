@@ -148,7 +148,7 @@ export default function Box() {
                   rotateAndSnapToEdge(0, 0);
                 }}>
                 <Animated.View style={[styles.goBackButton, animatedStyleBackBtn]}>
-                  <Ionicons name="arrow-back-outline" size={28} color="black" />
+                  <Ionicons name="arrow-back-outline" size={22} color="black" />
                 </Animated.View>
               </Pressable>
 
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   box: {
     height: HEIGHT,
     width: SCREEN_WIDTH,
-    backgroundColor: 'yellow',
+    backgroundColor: '#ffe606',
   },
   boxSide: {
     height: HEIGHT,
@@ -183,15 +183,16 @@ const styles = StyleSheet.create({
     width: MARGIN_LEFT,
     justifyContent: 'center',
     alignItems: 'center',
+    alignContent: 'center',
     borderBottomLeftRadius: 8,
     borderTopLeftRadius: 8,
     marginTop: MARGIN_LEFT * 2,
-    backgroundColor: 'white',
+    backgroundColor: '#fdf7ff',
     zIndex: 10,
   },
-  text: { color: 'white', fontSize: 20 },
+  text: { color: '#fdf7ff', fontSize: 20 },
   front: {
-    backgroundColor: 'white',
+    backgroundColor: '#fdf7ff',
     position: 'absolute',
   },
   innerRight: {

@@ -14,7 +14,7 @@ export default function DetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#fdf7ff',
   },
-  text: { color: 'white', fontSize: 20 },
+  text: { color: '#fdf7ff', fontSize: 20 },
 });
