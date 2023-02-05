@@ -129,7 +129,7 @@ export default function Box() {
   });
 
   return (
-    <SafeAreaProvider initialWindowMetrics={initialWindowMetrics}>
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <GestureDetector gesture={panGesture}>
         <View style={styles.container}>
           <View style={styles.box}>
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     borderBottomLeftRadius: 8,
     borderTopLeftRadius: 8,
-    marginTop: MARGIN_LEFT * 2,
+    marginTop: MARGIN_LEFT * 1.4,
     backgroundColor: '#fdf7ff',
     zIndex: 10,
   },
