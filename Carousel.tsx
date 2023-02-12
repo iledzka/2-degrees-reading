@@ -20,7 +20,7 @@ const books: Book[] = [
     image: require('./assets/images/Re-Sisters.png'),
     title: 'Re-Sisters',
     author: 'Cosey Fanni Tutti',
-    rating: 4.8,
+    rating: 4.5,
   },
   {
     image: require('./assets/images/Lord-of-the-Flies.png'),
@@ -32,7 +32,7 @@ const books: Book[] = [
     image: require('./assets/images/Dance.png'),
     title: 'Dance',
     author: 'Emma Warren',
-    rating: 5,
+    rating: 5.0,
   },
 ];
 
@@ -46,14 +46,14 @@ function CarouselItem({ image, title, author, rating }: Book) {
           <Text style={styles.authorText}>{author}</Text>
         </View>
 
-        <View style={{ flexDirection: 'row', alignContent: 'center' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Ionicons
             name="star"
             size={14}
             color="black"
-            style={{ color: 'orange', marginRight: 4 }}
+            style={{ color: 'orange', marginRight: 4, alignSelf: 'center', paddingTop: 2 }}
           />
-          <Text style={{ fontWeight: 'bold' }}>{rating}</Text>
+          <Text style={{ fontFamily: 'Raleway_700Bold' }}>{`${rating}`}</Text>
         </View>
       </View>
     </View>
@@ -89,7 +89,7 @@ export default function Carousel() {
 }
 
 const styles = StyleSheet.create({
-  carousel: { flex: 1, flexDirection: 'row' },
+  carousel: { flexDirection: 'row' },
   imageSmall: { resizeMode: 'contain', width: 60, height: 94 },
   carouselItem: {
     width: SCREEN_WIDTH * 0.7,
@@ -103,10 +103,11 @@ const styles = StyleSheet.create({
   authorText: {
     color: 'gray',
     paddingTop: 6,
+    fontFamily: 'Raleway_400Regular',
   },
   titleText: {
-    fontWeight: 'bold',
     paddingVertical: 4,
     fontSize: 15,
+    fontFamily: 'Raleway_600SemiBold',
   },
 });

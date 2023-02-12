@@ -1,5 +1,14 @@
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import {
+  useFonts,
+  Raleway_700Bold,
+  Raleway_600SemiBold,
+  Raleway_400Regular,
+  Raleway_500Medium,
+  Raleway_800ExtraBold,
+  Raleway_900Black,
+} from '@expo-google-fonts/raleway';
 import { View, Text, StyleSheet, Pressable, Image, Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -14,19 +23,33 @@ export default function MainScreen({
   onNavigateToDetailScreen: () => void;
 }) {
   const insets = useSafeAreaInsets();
+
+  const [fontsLoaded] = useFonts({
+    Raleway_400Regular,
+    Raleway_500Medium,
+    Raleway_600SemiBold,
+    Raleway_700Bold,
+    Raleway_800ExtraBold,
+    Raleway_900Black,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <View style={styles.containerInner}>
         <View style={styles.nameArea}>
-          <Text style={styles.h1}>Hello, Iza</Text>
+          <Text style={[styles.h1, { fontFamily: 'Raleway_900Black' }]}>Hello, Iza</Text>
           <Ionicons name="search" size={24} color="black" style={styles.icon} />
         </View>
         <View style={styles.heroButtonContainer}>
           <Pressable onPress={onNavigateToDetailScreen} style={styles.button}>
             <Ionicons name="chevron-back-circle" size={30} color="black" style={styles.icon} />
             <View>
-              <Text style={[styles.text, { fontWeight: 'bold' }]}>READING 2</Text>
-              <Text style={styles.text}>BOOKS LIST</Text>
+              <Text style={[styles.text, { fontFamily: 'Raleway_600SemiBold' }]}>READING 2</Text>
+              <Text style={[styles.text, { fontFamily: 'Raleway_500Medium' }]}>BOOKS LIST</Text>
             </View>
 
             <Image
@@ -38,10 +61,9 @@ export default function MainScreen({
         <View
           style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <Text style={styles.h2}>Popular</Text>
-          <Text style={{ color: 'orange', fontSize: 12, marginRight: 20 }}>See all</Text>
+          <Text style={[styles.seeAllLink, { fontFamily: 'Raleway_400Regular' }]}>See all</Text>
         </View>
         <Carousel />
-
         <Text style={styles.h2}>Audiobook</Text>
         <View style={[styles.audiobookItem, styles.rowContainer]}>
           <View style={styles.rowContainer}>
@@ -90,9 +112,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  text: { color: 'orange', fontSize: 18 },
-  h1: { color: 'black', fontSize: 28, fontWeight: 'bold' },
-  h2: { color: 'black', fontSize: 20, paddingVertical: 20 },
+  text: { color: 'orange', fontSize: 16 },
+  h1: { color: 'black', fontSize: 28 },
+  h2: {
+    color: 'black',
+    fontSize: 20,
+    paddingTop: 20,
+    paddingBottom: 10,
+    fontFamily: 'Raleway_800ExtraBold',
+  },
   icon: { paddingHorizontal: 20, paddingVertical: 10 },
   heroButtonContainer: {
     justifyContent: 'flex-end',
@@ -109,16 +137,21 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '-24deg' }],
   },
   imageSmall: { resizeMode: 'contain', width: 60, height: 94 },
-  imageAvatar: { resizeMode: 'contain', width: 48, aspectRatio: 1, margin: 10 },
-
+  imageAvatar: {
+    resizeMode: 'contain',
+    width: 60,
+    aspectRatio: 1,
+    margin: 10,
+  },
   authorText: {
     color: 'gray',
     paddingTop: 6,
+    fontFamily: 'Raleway_400Regular',
   },
   titleText: {
-    fontWeight: 'bold',
     paddingVertical: 4,
     fontSize: 15,
+    fontFamily: 'Raleway_600SemiBold',
   },
   rowContainer: {
     flexDirection: 'row',
@@ -137,4 +170,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
   },
+  seeAllLink: { color: 'orange', fontSize: 12, marginRight: 20, paddingTop: 20, paddingBottom: 10 },
 });
