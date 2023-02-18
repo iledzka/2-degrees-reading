@@ -11,6 +11,8 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { MARGIN_TOP_BTN } from './Constants';
+
 export default function DetailScreen() {
   const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({
@@ -27,7 +29,7 @@ export default function DetailScreen() {
   }
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-      <Text style={styles.h1}>Bookshelf</Text>
+      <Text style={[styles.h1, { marginTop: MARGIN_TOP_BTN + 5 }]}>Bookshelf</Text>
       <View style={styles.containerInner}>
         <View>
           <Text style={styles.h2}>Morning On The Banks of the Seine</Text>
@@ -73,7 +75,7 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 30,
     fontFamily: 'Raleway_900Black',
-    paddingVertical: 32,
+    paddingBottom: 32,
   },
   h2: {
     color: 'black',

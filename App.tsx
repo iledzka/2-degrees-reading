@@ -1,12 +1,16 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import Box from './Box';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Box />
-    </View>
+    <GestureHandlerRootView style={styles.container}>
+      <SafeAreaProvider>
+        <Box />
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 

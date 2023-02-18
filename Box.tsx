@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import React from 'react';
-import { View, StyleSheet, Dimensions, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
@@ -11,18 +11,27 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
+import {
+  SafeAreaProvider,
+  initialWindowMetrics,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
+import {
+  SCREEN_HEIGHT,
+  SCREEN_WIDTH,
+  ROTATION,
+  TRANSLATION_X_CLAMP,
+  MARGIN_LEFT,
+  MARGIN_TOP_BTN,
+} from './Constants';
 import DetailScreen from './DetailScreen';
 import MainScreen from './MainScreen';
 import { transformOrigin, rotateX } from './utils';
 
-const { width: SCREEN_WIDTH, height: HEIGHT } = Dimensions.get('window');
-const ROTATION = -90;
-const TRANSLATION_X_CLAMP = 70;
-const MARGIN_LEFT = 34;
-
 export default function Box() {
+  const insets = useSafeAreaInsets();
+
   const rotate = useSharedValue(0);
 
   const translateX = useDerivedValue(() => {
@@ -114,7 +123,7 @@ export default function Box() {
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
-        { perspective: HEIGHT },
+        { perspective: SCREEN_HEIGHT },
         { matrix: matrix.value },
         { translateX: translateX.value },
       ],
@@ -123,7 +132,7 @@ export default function Box() {
   const animatedStyleRight = useAnimatedStyle(() => {
     return {
       transform: [
-        { perspective: HEIGHT },
+        { perspective: SCREEN_HEIGHT },
         { matrix: matrixRight.value },
         { translateX: translateX.value },
       ],
@@ -152,7 +161,12 @@ export default function Box() {
                 onPress={() => {
                   navigateToMainScreen();
                 }}>
-                <Animated.View style={[styles.goBackButton, animatedStyleBackBtn]}>
+                <Animated.View
+                  style={[
+                    styles.goBackButton,
+                    animatedStyleBackBtn,
+                    { marginTop: MARGIN_TOP_BTN + insets.top },
+                  ]}>
                   <Ionicons name="arrow-back-outline" size={22} color="black" />
                 </Animated.View>
               </Pressable>
@@ -174,12 +188,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   box: {
-    height: HEIGHT,
+    height: SCREEN_HEIGHT,
     width: SCREEN_WIDTH,
     backgroundColor: '#ffe606',
   },
   boxSide: {
-    height: HEIGHT,
+    height: SCREEN_HEIGHT,
     width: SCREEN_WIDTH,
   },
   goBackButton: {
@@ -190,7 +204,6 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     borderBottomLeftRadius: 8,
     borderTopLeftRadius: 8,
-    marginTop: MARGIN_LEFT * 2.2,
     backgroundColor: '#fdf7ff',
     zIndex: 10,
   },
@@ -199,7 +212,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   innerRight: {
-    height: HEIGHT,
+    height: SCREEN_HEIGHT,
     width: SCREEN_WIDTH - MARGIN_LEFT,
     marginLeft: 0,
     flex: 1,
