@@ -64,10 +64,19 @@ export default function Box() {
       : withTiming(MARGIN_LEFT, { duration: 300, easing: Easing.ease });
   }, [rotate]);
 
-  const rotateAndSnapToEdge = (tX: number, r: number) => {
+  const rotateAndSnapToEdge = (r: number) => {
     'worklet';
     const config = { duration: 300, easing: Easing.bezier(1, 0.3, 0.85, 1) };
     rotate.value = withTiming(r, config);
+  };
+
+  const navigateToDetailScreen = () => {
+    'worklet';
+    rotateAndSnapToEdge(ROTATION);
+  };
+  const navigateToMainScreen = () => {
+    'worklet';
+    rotateAndSnapToEdge(0);
   };
 
   const panGesture = Gesture.Pan()
@@ -96,9 +105,9 @@ export default function Box() {
       'worklet';
 
       if (rotate.value > ROTATION / 2 && translateX.value !== 0) {
-        rotateAndSnapToEdge(0, 0);
+        navigateToMainScreen();
       } else if (rotate.value <= ROTATION / 2) {
-        rotateAndSnapToEdge(MARGIN_LEFT, ROTATION);
+        navigateToDetailScreen();
       }
     });
 
@@ -134,18 +143,14 @@ export default function Box() {
         <View style={styles.container}>
           <View style={styles.box}>
             <Animated.View style={[styles.boxSide, styles.front, animatedStyle]}>
-              <MainScreen
-                onNavigateToDetailScreen={() => {
-                  rotateAndSnapToEdge(MARGIN_LEFT, ROTATION);
-                }}
-              />
+              <MainScreen onNavigateToDetailScreen={navigateToDetailScreen} />
             </Animated.View>
 
             <Animated.View style={[styles.boxSide, animatedStyleRight]}>
               <Pressable
                 style={{ zIndex: 10 }}
                 onPress={() => {
-                  rotateAndSnapToEdge(0, 0);
+                  navigateToMainScreen();
                 }}>
                 <Animated.View style={[styles.goBackButton, animatedStyleBackBtn]}>
                   <Ionicons name="arrow-back-outline" size={22} color="black" />
@@ -168,7 +173,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
-
   box: {
     height: HEIGHT,
     width: SCREEN_WIDTH,

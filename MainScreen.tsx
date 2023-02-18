@@ -46,7 +46,7 @@ export default function MainScreen({
         </View>
         <View style={styles.heroButtonContainer}>
           <Pressable onPress={onNavigateToDetailScreen} style={styles.button}>
-            <Ionicons name="chevron-back-circle" size={30} color="black" style={styles.icon} />
+            <Ionicons name="chevron-back-circle" size={32} color="black" style={styles.icon} />
             <View>
               <Text style={[styles.text, { fontFamily: 'Raleway_600SemiBold' }]}>READING 2</Text>
               <Text style={[styles.text, { fontFamily: 'Raleway_500Medium' }]}>BOOKS LIST</Text>
@@ -80,9 +80,9 @@ export default function MainScreen({
 
       <View style={styles.tabBar}>
         <Feather name="triangle" size={24} color="black" style={styles.icon} />
-        <Feather name="star" size={24} color="black" style={styles.icon} />
-        <Feather name="hexagon" size={24} color="black" style={styles.icon} />
-        <Feather name="circle" size={24} color="black" style={styles.icon} />
+        <Feather name="star" size={24} color="black" style={[styles.icon, styles.iconGray]} />
+        <Feather name="hexagon" size={24} color="black" style={[styles.icon, styles.iconGray]} />
+        <Feather name="circle" size={24} color="black" style={[styles.icon, styles.iconGray]} />
       </View>
     </View>
   );
@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Raleway_800ExtraBold',
   },
   icon: { paddingHorizontal: 20, paddingVertical: 10 },
+  iconGray: { color: 'gray' },
   heroButtonContainer: {
     justifyContent: 'flex-end',
     paddingTop: 30,
