@@ -194,7 +194,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fdf7ff',
     zIndex: 10,
   },
-  text: { color: '#fdf7ff', fontSize: 20 },
   front: {
     backgroundColor: '#fdf7ff',
     position: 'absolute',
