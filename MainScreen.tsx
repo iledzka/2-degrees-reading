@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingTop: 8,
     overflow: 'hidden',
+    justifyContent: 'space-evenly',
   },
   button: {
     paddingVertical: 16,
@@ -112,11 +113,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  text: { color: 'orange', fontSize: 16 },
-  h1: { color: 'black', fontSize: 28 },
+  text: { color: 'orange', fontSize: 18 },
+  h1: { color: 'black', fontSize: 30 },
   h2: {
     color: 'black',
-    fontSize: 20,
+    fontSize: 22,
     paddingTop: 20,
     paddingBottom: 10,
     fontFamily: 'Raleway_800ExtraBold',
@@ -137,7 +138,6 @@ const styles = StyleSheet.create({
     right: 34,
     transform: [{ rotate: '-24deg' }],
   },
-  imageSmall: { resizeMode: 'contain', width: 60, height: 94 },
   imageAvatar: {
     resizeMode: 'contain',
     width: 60,
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     paddingVertical: 4,
-    fontSize: 15,
+    fontSize: 18,
     fontFamily: 'Raleway_600SemiBold',
   },
   rowContainer: {
@@ -167,9 +167,9 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT / 9,
+    height: SCREEN_HEIGHT / 10,
     alignItems: 'center',
     justifyContent: 'space-evenly',
   },
-  seeAllLink: { color: 'orange', fontSize: 12, marginRight: 20, paddingTop: 20, paddingBottom: 10 },
+  seeAllLink: { color: 'orange', fontSize: 14, marginRight: 20, paddingTop: 20, paddingBottom: 10 },
 });

@@ -157,7 +157,7 @@ export default function Box() {
                 </Animated.View>
               </Pressable>
 
-              <View style={[styles.innerRight]}>
+              <View style={styles.innerRight}>
                 <DetailScreen />
               </View>
             </Animated.View>
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     borderBottomLeftRadius: 8,
     borderTopLeftRadius: 8,
-    marginTop: MARGIN_LEFT * 1.4,
+    marginTop: MARGIN_LEFT * 2.2,
     backgroundColor: '#fdf7ff',
     zIndex: 10,
   },

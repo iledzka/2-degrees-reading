@@ -46,14 +46,9 @@ function CarouselItem({ image, title, author, rating }: Book) {
           <Text style={styles.authorText}>{author}</Text>
         </View>
 
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Ionicons
-            name="star"
-            size={14}
-            color="black"
-            style={{ color: 'orange', marginRight: 4, alignSelf: 'center', paddingTop: 2 }}
-          />
-          <Text style={{ fontFamily: 'Raleway_700Bold' }}>{`${rating}`}</Text>
+        <View style={styles.ratingView}>
+          <Ionicons name="star" size={18} color="black" style={styles.ratingStar} />
+          <Text style={styles.rating}>{`${rating}`}</Text>
         </View>
       </View>
     </View>
@@ -90,7 +85,7 @@ export default function Carousel() {
 
 const styles = StyleSheet.create({
   carousel: { flexDirection: 'row' },
-  imageSmall: { resizeMode: 'contain', width: 60, height: 94 },
+  imageSmall: { resizeMode: 'contain', width: 86, height: 134 },
   carouselItem: {
     width: SCREEN_WIDTH * 0.7,
     marginBottom: 10,
@@ -107,7 +102,10 @@ const styles = StyleSheet.create({
   },
   titleText: {
     paddingVertical: 4,
-    fontSize: 15,
+    fontSize: 18,
     fontFamily: 'Raleway_600SemiBold',
   },
+  rating: { fontFamily: 'Raleway_700Bold', fontSize: 16 },
+  ratingStar: { color: 'orange', marginRight: 4, alignSelf: 'center', paddingTop: 2 },
+  ratingView: { flexDirection: 'row', alignItems: 'center', paddingBottom: 2 },
 });
