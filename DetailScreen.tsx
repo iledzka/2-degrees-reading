@@ -12,6 +12,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MARGIN_TOP_BTN } from './Constants';
+import { isAndroid } from './utils';
 
 export default function DetailScreen() {
   const insets = useSafeAreaInsets();
@@ -29,7 +30,9 @@ export default function DetailScreen() {
   }
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-      <Text style={[styles.h1, { marginTop: MARGIN_TOP_BTN + 5 }]}>Bookshelf</Text>
+      <Text style={[styles.h1, { marginTop: MARGIN_TOP_BTN + (isAndroid ? 0 : 5) }]}>
+        Bookshelf
+      </Text>
       <View style={styles.containerInner}>
         <View>
           <Text style={styles.h2}>Morning On The Banks of the Seine</Text>
